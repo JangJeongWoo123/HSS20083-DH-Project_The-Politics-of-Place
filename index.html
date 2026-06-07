@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Politics of Place — World Space Launch Sites</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+:root{--bg:#0a0a0f;--surface:#12121a;--border:#2a2a3a;--text:#e8e4d8;--muted:#6b6880;--accent:#c9a84c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:"Space Mono",monospace;height:100vh;width:100vw;overflow:hidden;}
+#map{width:100vw;height:100vh;}
+.leaflet-tile-pane{filter:brightness(0.5) saturate(0.4);}.leaflet-tile-pane.color-mode{filter:none;}.leaflet-tile-pane.satellite-mode{filter:brightness(0.82);}
+#header{position:fixed;top:0;left:0;right:0;z-index:500;padding:14px 22px;display:flex;align-items:baseline;gap:14px;background:linear-gradient(to bottom,rgba(10,10,15,.97) 60%,transparent);pointer-events:none;}
+#header h1{font-family:"Libre Baskerville",serif;font-style:italic;font-size:1.1rem;color:var(--accent);}
+#header .sub{font-size:.55rem;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;}
+#nav{position:fixed;top:14px;right:16px;z-index:500;display:flex;gap:6px;}
+.nbtn{background:rgba(10,10,15,.88);border:1px solid var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;cursor:pointer;transition:all .2s;backdrop-filter:blur(6px);}
+.nbtn:hover{border-color:var(--accent);color:var(--accent);}
+#filters{position:fixed;top:52px;left:22px;z-index:500;display:flex;gap:5px;flex-wrap:wrap;max-width:400px;}
+.fbtn{background:rgba(10,10,15,.88);border:1px solid var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;cursor:pointer;transition:all .2s;backdrop-filter:blur(6px);}
+.fbtn:hover,.fbtn.active{border-color:var(--accent);color:var(--accent);}
+#legend{position:fixed;bottom:22px;left:22px;z-index:500;background:rgba(10,10,15,.92);border:1px solid var(--border);padding:12px 16px;font-size:.53rem;letter-spacing:.1em;text-transform:uppercase;backdrop-filter:blur(8px);}
+#legend .lt{color:var(--muted);margin-bottom:8px;font-size:.48rem;}
+.li{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+#panel{position:fixed;right:0;top:0;bottom:0;width:340px;background:rgba(10,10,15,.97);border-left:1px solid var(--border);z-index:600;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);overflow-y:auto;}
+#panel.open{transform:translateX(0);}
+#pi{padding:26px 24px 48px;}
+#pc{position:absolute;top:13px;right:13px;background:none;border:1px solid var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:.53rem;padding:4px 8px;cursor:pointer;}
+#pc:hover{border-color:var(--text);color:var(--text);}
+.pcat{font-size:.48rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:9px;padding:3px 8px;display:inline-block;}
+.pname{font-family:"Libre Baskerville",serif;font-size:1.2rem;line-height:1.25;margin-bottom:5px;}
+.pcountry{font-size:.56rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;}
+.pdiv{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.plbl{font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.pval{font-size:.68rem;line-height:1.5;margin-bottom:11px;}
+.pint{font-family:"Libre Baskerville",serif;font-size:.8rem;line-height:1.78;color:#c4c0b4;}
+.pint em{color:var(--accent);font-style:italic;}
+.overlay{position:fixed;inset:0;z-index:700;background:rgba(10,10,15,.97);overflow-y:auto;display:none;}
+.overlay.show{display:block;}
+.ov-inner{max-width:680px;margin:0 auto;padding:52px 40px 80px;}
+.ov-close{position:fixed;top:18px;right:22px;background:none;border:1px solid var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:.53rem;padding:5px 10px;cursor:pointer;z-index:800;}
+.ov-close:hover{border-color:var(--text);color:var(--text);}
+.ov-inner h2{font-family:"Libre Baskerville",serif;font-style:italic;font-size:1.5rem;color:var(--accent);margin-bottom:6px;}
+.ov-inner .ov-sub{font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:32px;}
+.ov-inner h3{font-family:"Libre Baskerville",serif;font-size:1rem;color:var(--text);margin:28px 0 10px;}
+.ov-inner p{font-family:"Libre Baskerville",serif;font-size:.86rem;line-height:1.82;color:#c4c0b4;margin-bottom:14px;}
+.ov-inner ul{margin:0 0 14px 18px;}
+.ov-inner ul li{font-family:"Libre Baskerville",serif;font-size:.84rem;line-height:1.75;color:#c4c0b4;margin-bottom:6px;}
+.ov-inner em{color:var(--accent);font-style:italic;}
+.ov-inner strong{color:var(--text);}
+.cat-tag{display:inline-block;font-size:.48rem;letter-spacing:.13em;text-transform:uppercase;padding:3px 8px;border:1px solid;margin:3px 3px 3px 0;}
+#intro{position:fixed;inset:0;z-index:800;background:rgba(10,10,15,.97);display:flex;align-items:center;justify-content:center;}
+#ib{max-width:520px;padding:42px;border:1px solid var(--border);background:var(--surface);}
+#ib h1{font-family:"Libre Baskerville",serif;font-style:italic;font-size:1.65rem;color:var(--accent);margin-bottom:6px;}
+#ib .isub{font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+#ib p{font-family:"Libre Baskerville",serif;font-size:.83rem;line-height:1.8;color:#c0bcb0;margin-bottom:12px;}
+#ibtn{margin-top:20px;background:none;border:1px solid var(--accent);color:var(--accent);font-family:"Space Mono",monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;padding:9px 18px;cursor:pointer;transition:all .2s;}
+#ibtn:hover{background:var(--accent);color:var(--bg);}
+#cnt{position:fixed;bottom:22px;right:22px;font-size:.5rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;z-index:500;}
+#cnt span{color:var(--accent);}
+.leaflet-popup-content-wrapper{background:rgba(12,12,20,.95);border:1px solid #2a2a3a;border-radius:0;color:#e8e4d8;font-family:"Space Mono",monospace;font-size:.62rem;}
+.leaflet-popup-tip{background:#12121a;}
+.leaflet-popup-content{margin:9px 13px;}
+</style>
+</head>
+<body>
+<div id="intro">
+  <div id="ib">
+    <h1>The Politics of Place</h1>
+    <div class="isub">A Digital Humanities Project — Jeongwoo Jang, KAIST HSS/DHS283 2026S</div>
+    <p>Why are the world's major space launch sites located where they are? The standard answer is technical: proximity to the equator, coastal access, remote areas. But many launch sites sit in former colonial territories, on islands inhabited by indigenous communities, or in deserts states have historically treated as empty and expendable.</p>
+    <p><em>The geography of space infrastructure is not only an engineering problem — it is a political one.</em></p>
+    <p style="font-size:.62rem;color:var(--muted);font-family:'Space Mono',monospace;margin-top:6px;">Click any marker to read its interpretive note. Use filters to explore by category. See About / Conclusion / Data &amp; Method for full context.</p>
+    <button id="ibtn" onclick="document.getElementById('intro').style.display='none'">Explore the Map &#8594;</button>
+  </div>
+</div>
+<div id="header">
+  <h1>The Politics of Place</h1>
+  <span class="sub">Geography &amp; Power of World Space Launch Sites — 33 Sites</span>
+</div>
+<div id="nav"><button class="nbtn" id="tile-btn" onclick="cycleTile()">Map: Dark</button>
+  <button class="nbtn" onclick="showOverlay('about')">About</button>
+  <button class="nbtn" onclick="showOverlay('conclusion')">Conclusion</button>
+  <button class="nbtn" onclick="showOverlay('data')">Data &amp; Method</button>
+</div>
+<div id="filters">
+  <button class="fbtn active" data-cat="all">All (33)</button>
+  <button class="fbtn" data-cat="military">Military Origin</button>
+  <button class="fbtn" data-cat="colonial">Colonial Territory</button>
+  <button class="fbtn" data-cat="national">National Prestige</button>
+  <button class="fbtn" data-cat="commercial">Commercial</button>
+  <button class="fbtn" data-cat="peripheral">Peripheral Land</button>
+</div>
+<div id="map"></div>
+<div id="panel">
+  <button id="pc" onclick="closePanel()">&#10005; Close</button>
+  <div id="pi"></div>
+</div>
+<div id="legend">
+  <div class="lt">Category</div>
+  <div class="li"><div class="ld" style="background:#c4614a"></div>Military Origin</div>
+  <div class="li"><div class="ld" style="background:#c9a84c"></div>Colonial Territory</div>
+  <div class="li"><div class="ld" style="background:#5b8fa8"></div>National Prestige</div>
+  <div class="li"><div class="ld" style="background:#7b9e87"></div>Commercial</div>
+  <div class="li"><div class="ld" style="background:#9b7bb5"></div>Peripheral Land</div>
+</div>
+<div id="cnt">Showing <span id="cn">33</span> of 33 sites</div>
+
+<div id="ov-about" class="overlay">
+  <button class="ov-close" onclick="hideOverlay('about')">&#10005; Close</button>
+  <div class="ov-inner">
+    <h2>About This Project</h2>
+    <div class="ov-sub">Jeongwoo Jang · KAIST HSS/DHS283 · 2026 Spring</div>
+    <h3>Why This Project Matters</h3>
+    <p>Space launch sites are usually discussed in terms of engineering. But when you look at where the world's major spaceports are actually located — a former French penal colony in South America, the Kazakh steppe built by Gulag labor, a Brazilian coastal strip that displaced Quilombola communities, a desert on Yi ethnic minority land in Sichuan — a different pattern emerges. The geography of space infrastructure reflects not only engineering logic but also the political history of which lands and populations states have treated as available, expendable, or controllable.</p>
+    <p>This matters because it changes how we understand space exploration. If we treat launch sites as neutral technical choices, we miss the way that technological progress has repeatedly been built on the dispossession or marginalization of specific communities. For humanities scholars, this project demonstrates that technological infrastructure is a legitimate object of spatial and political analysis. For general readers, it offers a way of seeing the space age that goes beyond the heroic narrative of rockets and astronauts.</p>
+    <h3>Research Question</h3>
+    <p>Why are the world's major space launch sites located where they are, and what does their spatial distribution reveal about the relationship between technology, geography, and power?</p>
+    <h3>Category Framework</h3>
+    <div style="margin:16px 0;">
+      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#c4614a;border-color:#c4614a44">Military Origin</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites originating from Cold War missile programs or active military installations.</span></div>
+      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#c9a84c;border-color:#c9a84c44">Colonial Territory</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites built on land controlled through colonial or imperial relationships.</span></div>
+      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#5b8fa8;border-color:#5b8fa844">National Prestige</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites built primarily as symbols of national technological ambition.</span></div>
+      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#7b9e87;border-color:#7b9e8744">Commercial</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites operated primarily by private companies, often inheriting military infrastructure or seeking low-regulation environments.</span></div>
+      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#9b7bb5;border-color:#9b7bb544">Peripheral Land</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites on marginal, depopulated, or indigenous territory chosen because the state could use it without significant political resistance.</span></div>
+    </div>
+    <h3>Primary Scholarly Reference</h3>
+    <p>The main humanistic framework comes from Peter Redfield's <em>Space in the Tropics: From Convicts to Rockets in French Guiana</em> (University of California Press, 2000).</p>
+  </div>
+</div>
+
+<div id="ov-conclusion" class="overlay">
+  <button class="ov-close" onclick="hideOverlay('conclusion')">&#10005; Close</button>
+  <div class="ov-inner">
+    <h2>Conclusion</h2>
+    <div class="ov-sub">What the Map Argues</div>
+    <h3>The Pattern</h3>
+    <p>Across the thirty-three sites examined in this project, a consistent pattern emerges: launch sites are disproportionately located in places that states could use without significant political resistance. Deserts, remote islands, former colonial territories, indigenous lands, depopulated peripheries — these are not incidentally where rockets launch from. They are where rockets launch from <em>because</em> states found them available.</p>
+    <h3>Three Key Findings</h3>
+    <p><strong>1. Military infrastructure became space infrastructure.</strong> The majority of major launch sites originated as military missile facilities during the Cold War. The space age did not begin from scratch — it began from a military geography already in place.</p>
+    <p><strong>2. Colonial and peripheral territories bear a disproportionate share of the burden.</strong> Kourou, Alcantara, Woomera, Hammaguir, Luigi Broglio — in each case, a region with less political power hosts infrastructure that serves national or supranational ambitions. The benefits flow outward; the land use remains local.</p>
+    <p><strong>3. The commercial turn in space has not changed this pattern.</strong> Rocket Lab's Mahia Peninsula, Spaceport America, Boca Chica, Spaceport Cornwall — commercial space has largely inherited or replicated the same geographic logic. Private capital seeks the same qualities military planners sought: remoteness, low regulation, and land that can be used.</p>
+    <h3>What This Project Cannot Show</h3>
+    <p>A map can show where launch sites are located. It cannot show labor conditions, environmental consequences, the experiences of displaced communities, or the full complexity of political negotiations. The interpretive notes are starting points, not conclusions.</p>
+    <h3>A Final Thought</h3>
+    <p>The space age is often narrated as humanity's escape from earthly constraints. This project insists that the infrastructure of transcendence is built on earth, in specific places, under specific political conditions. <em>The geography of space is not neutral. It never was.</em></p>
+  </div>
+</div>
+
+<div id="ov-data" class="overlay">
+  <button class="ov-close" onclick="hideOverlay('data')">&#10005; Close</button>
+  <div class="ov-inner">
+    <h2>Data &amp; Method</h2>
+    <div class="ov-sub">Transparency, Sources, and Interpretive Choices</div>
+    <h3>Dataset Overview</h3>
+    <p>This project examines <strong>33 major operational or historically significant spaceports</strong> selected from a broader list of globally active launch facilities. The dataset was constructed manually. Sites were selected to represent geographic diversity (all inhabited continents), operator diversity (state, military, intergovernmental, commercial), and historical diversity (1946 to 2023). Colonial Territory and Commercial categories were intentionally expanded to reflect their global significance.</p>
+    <h3>Data Sources</h3>
+    <p>Factual data verified through Wikipedia's "List of rocket launch sites" cross-referenced against official agency websites: NASA (nasa.gov), ESA (esa.int), JAXA (jaxa.jp), KARI (kari.re.kr), ISRO (isro.gov.in), CNSA (cnsa.gov.cn), Roscosmos (roscosmos.ru), Rocket Lab (rocketlabusa.com), SpaceX (spacex.com).</p>
+    <h3>Category Construction</h3>
+    <p>The five categories were developed inductively after the initial dataset was assembled — categorization followed observation, not the reverse. The primary theoretical framework comes from Peter Redfield's <em>Space in the Tropics</em> (2000).</p>
+    <h3>Interpretive Notes</h3>
+    <p>All interpretive notes are original analysis by Jeongwoo Jang (2026), drawing on publicly available historical information and the project's analytical framework.</p>
+    <h3>AI Usage</h3>
+    <p>This project was developed with assistance from Claude (Anthropic, claude-sonnet-4-6, 2026) for drafting interpretive notes, HTML/CSS/JavaScript coding, and dataset structuring. All analytical arguments, category choices, and final content reflect the author's own intellectual decisions.</p>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var CATS={
+  military:{color:"#c4614a",label:"Military Origin"},
+  colonial:{color:"#c9a84c",label:"Colonial Territory"},
+  national:{color:"#5b8fa8",label:"National Prestige"},
+  commercial:{color:"#7b9e87",label:"Commercial"},
+  peripheral:{color:"#9b7bb5",label:"Peripheral Land"}
+};
+var sites=[
+  {
+    "id": "baikonur",
+    "name": "Baikonur Cosmodrome",
+    "country": "Kazakhstan (leased by Russia)",
+    "lat": 45.92,
+    "lng": 63.34,
+    "founded": 1955,
+    "operator": "Roscosmos / Russia",
+    "cat": "military",
+    "tags": [
+      "Cold War",
+      "Soviet",
+      "Gulag labor",
+      "steppe"
+    ],
+    "geo": "Vast semi-arid steppe, 200km from nearest city",
+    "interpretation": "Baikonur was chosen not despite its remoteness, but because of it. Built largely by Gulag labor and military conscripts, the cosmodrome represents the Cold War logic of using peripheral territories as sacrificial infrastructure. Kazakhstan gained independence in 1991, yet Russia continues to lease the site, encoding an ongoing asymmetry between the space power and the host nation."
+  },
+  {
+    "id": "kourou",
+    "name": "Guiana Space Centre (Kourou)",
+    "country": "French Guiana (France)",
+    "lat": 5.24,
+    "lng": -52.77,
+    "founded": 1968,
+    "operator": "ESA / CNES",
+    "cat": "colonial",
+    "tags": [
+      "colonial",
+      "equatorial",
+      "penal colony history",
+      "ESA"
+    ],
+    "geo": "Equatorial coastal jungle; former penal colony site",
+    "interpretation": "Kourou occupies land France has controlled as an overseas territory since 1667. Peter Redfield's research shows the same territory previously housed the infamous penal colonies known as Devil's Island. French Guiana remains a periphery in service of metropolitan ambitions."
+  },
+  {
+    "id": "kennedy",
+    "name": "Kennedy Space Center",
+    "country": "United States",
+    "lat": 28.57,
+    "lng": -80.65,
+    "founded": 1962,
+    "operator": "NASA",
+    "cat": "military",
+    "tags": [
+      "Cold War",
+      "NASA",
+      "missile heritage",
+      "Florida"
+    ],
+    "geo": "Barrier island on Atlantic coast; missile test heritage since 1949",
+    "interpretation": "Kennedy Space Center emerged directly from the Cold War missile race; Cape Canaveral had been a military test range since 1949. The civilian space program did not choose its geography freely: it inherited a military landscape."
+  },
+  {
+    "id": "vandenberg",
+    "name": "Vandenberg Space Force Base",
+    "country": "United States",
+    "lat": 34.74,
+    "lng": -120.57,
+    "founded": 1958,
+    "operator": "US Space Force",
+    "cat": "military",
+    "tags": [
+      "military",
+      "polar orbit",
+      "surveillance",
+      "California"
+    ],
+    "geo": "Remote Pacific coastal bluffs, southward ocean corridor",
+    "interpretation": "Vandenberg exists because surveillance satellites require polar orbits. The geography was chosen to enable orbital paths optimal for watching the earth from above."
+  },
+  {
+    "id": "plesetsk",
+    "name": "Plesetsk Cosmodrome",
+    "country": "Russia",
+    "lat": 62.93,
+    "lng": 40.57,
+    "founded": 1957,
+    "operator": "Russian Aerospace Forces",
+    "cat": "military",
+    "tags": [
+      "military",
+      "Soviet",
+      "Arctic",
+      "secret ICBM base"
+    ],
+    "geo": "Sub-Arctic forest, 800km north of Moscow",
+    "interpretation": "The world's most-used launch site by total launches, Plesetsk was originally a secret ICBM base whose existence the Soviet government officially denied for years. Its high latitude is exactly what makes it optimal for military reconnaissance satellites in polar orbits."
+  },
+  {
+    "id": "kapustin_yar",
+    "name": "Kapustin Yar",
+    "country": "Russia",
+    "lat": 48.57,
+    "lng": 46.26,
+    "founded": 1946,
+    "operator": "Russian Aerospace Forces",
+    "cat": "military",
+    "tags": [
+      "Soviet origins",
+      "V-2 technology",
+      "ICBM",
+      "Cold War origins"
+    ],
+    "geo": "Volga steppe, Astrakhan Oblast",
+    "interpretation": "Kapustin Yar is Russia's oldest launch facility, established in 1946 using captured German V-2 technology. It is the origin point of the entire Soviet space program — and of the Cold War geography of space infrastructure that this project maps."
+  },
+  {
+    "id": "jiuquan",
+    "name": "Jiuquan Satellite Launch Center",
+    "country": "China",
+    "lat": 40.96,
+    "lng": 100.29,
+    "founded": 1958,
+    "operator": "PLA / CNSA",
+    "cat": "military",
+    "tags": [
+      "Cold War",
+      "Gobi Desert",
+      "PLA control",
+      "Sino-Soviet"
+    ],
+    "geo": "Gobi Desert, remote arid plateau",
+    "interpretation": "China's first launch site was built in the Gobi Desert with Soviet technical assistance. When Sino-Soviet cooperation collapsed in 1960, China continued independently. The site remains under PLA control."
+  },
+  {
+    "id": "xichang",
+    "name": "Xichang Satellite Launch Center",
+    "country": "China",
+    "lat": 28.25,
+    "lng": 102.03,
+    "founded": 1984,
+    "operator": "CNSA / PLA",
+    "cat": "national",
+    "tags": [
+      "national prestige",
+      "Yi ethnic minority",
+      "Sichuan",
+      "geostationary"
+    ],
+    "geo": "Sichuan highlands, Yi ethnic minority region",
+    "interpretation": "Xichang was built in territory historically inhabited by the Yi people. Local Yi communities were not meaningfully consulted. Infrastructure built on ethnic minority territory in service of a national program whose benefits were not primarily local."
+  },
+  {
+    "id": "wenchang",
+    "name": "Wenchang Space Launch Site",
+    "country": "China",
+    "lat": 19.61,
+    "lng": 110.95,
+    "founded": 2016,
+    "operator": "CNSA",
+    "cat": "national",
+    "tags": [
+      "national prestige",
+      "Hainan Island",
+      "equatorial advantage",
+      "showcase"
+    ],
+    "geo": "Hainan Island, China's southernmost province",
+    "interpretation": "Wenchang was built on Hainan Island to exploit China's southernmost territory. Hainan's development as a free trade zone and space hub reflects Beijing's strategy of using its southern periphery as an economic and technological laboratory."
+  },
+  {
+    "id": "tanegashima",
+    "name": "Tanegashima Space Center",
+    "country": "Japan",
+    "lat": 30.4,
+    "lng": 130.97,
+    "founded": 1969,
+    "operator": "JAXA",
+    "cat": "national",
+    "tags": [
+      "national prestige",
+      "island",
+      "fishing negotiation",
+      "JAXA"
+    ],
+    "geo": "Southern island, fishing community, restricted launch windows",
+    "interpretation": "Tanegashima required sustained negotiation with local fishing communities, who were granted restricted launch windows. Yet the island's economy was still reorganized around the space program."
+  },
+  {
+    "id": "uchinoura",
+    "name": "Uchinoura Space Center",
+    "country": "Japan",
+    "lat": 31.25,
+    "lng": 131.08,
+    "founded": 1962,
+    "operator": "JAXA",
+    "cat": "peripheral",
+    "tags": [
+      "scientific rockets",
+      "southern cape",
+      "fishing community",
+      "Japan"
+    ],
+    "geo": "Southern Kyushu cape, fishing communities, Kagoshima Prefecture",
+    "interpretation": "Uchinoura was Japan's first launch facility. It handles smaller scientific rockets while Tanegashima handles flagship vehicles — the internal periphery of Japan's space geography."
+  },
+  {
+    "id": "naro",
+    "name": "Naro Space Center",
+    "country": "South Korea",
+    "lat": 34.43,
+    "lng": 127.53,
+    "founded": 2009,
+    "operator": "KARI",
+    "cat": "national",
+    "tags": [
+      "national prestige",
+      "South Jeolla Province",
+      "late entrant",
+      "peninsula"
+    ],
+    "geo": "Southern coastal peninsula, Goheung County, South Jeolla Province",
+    "interpretation": "South Korea's first launch center was built in South Jeolla Province — historically one of the most politically marginalized regions in South Korean politics."
+  },
+  {
+    "id": "jeju",
+    "name": "Jeju Launch Site (proposed)",
+    "country": "South Korea",
+    "lat": 33.51,
+    "lng": 126.52,
+    "founded": 2024,
+    "operator": "KARI (planned)",
+    "cat": "national",
+    "tags": [
+      "South Korea",
+      "Jeju Island",
+      "environmental opposition",
+      "national prestige"
+    ],
+    "geo": "Jeju Island — major tourist destination, special autonomous province",
+    "interpretation": "Jeju presents a striking contrast to Naro: a prosperous tourist destination with significant political leverage that has successfully resisted similar infrastructure. The contrast illustrates how political geography shapes site selection."
+  },
+  {
+    "id": "sriharikota",
+    "name": "Satish Dhawan Space Centre",
+    "country": "India",
+    "lat": 13.72,
+    "lng": 80.23,
+    "founded": 1971,
+    "operator": "ISRO",
+    "cat": "national",
+    "tags": [
+      "postcolonial prestige",
+      "barrier island",
+      "ISRO",
+      "population displaced"
+    ],
+    "geo": "Barrier island, Bay of Bengal, Andhra Pradesh",
+    "interpretation": "India's primary launch center occupies Sriharikota Island. The existing population was relocated. A peripheral coastal island transformed into a symbol of the nation's technological coming-of-age."
+  },
+  {
+    "id": "thumba",
+    "name": "Thumba Equatorial Rocket Launching Station",
+    "country": "India",
+    "lat": 8.53,
+    "lng": 76.87,
+    "founded": 1963,
+    "operator": "ISRO (decommissioned)",
+    "cat": "colonial",
+    "tags": [
+      "postcolonial",
+      "church land",
+      "equatorial",
+      "ISRO origins"
+    ],
+    "geo": "Thumba, Kerala — near magnetic equator, former church land",
+    "interpretation": "India's first rocket launch station was established on land that included a local Catholic church and fishing community. Both were relocated. Thumba followed the same underlying logic — the state identified land it needed and used its authority to acquire it."
+  },
+  {
+    "id": "semnan",
+    "name": "Imam Khomeini Space Launch Terminal",
+    "country": "Iran",
+    "lat": 35.23,
+    "lng": 53.92,
+    "founded": 2008,
+    "operator": "ISA / IRGC",
+    "cat": "military",
+    "tags": [
+      "IRGC",
+      "ballistic missile dual-use",
+      "desert",
+      "strategic ambiguity"
+    ],
+    "geo": "Central Iranian desert plateau, Semnan Province",
+    "interpretation": "Iran's launch center operates in close coordination with the Islamic Revolutionary Guard Corps. The same infrastructure that launches satellites can launch missiles. Iran's space geography is the geography of deterrence."
+  },
+  {
+    "id": "nouri",
+    "name": "Imam Ali Space Base",
+    "country": "Iran",
+    "lat": 34.08,
+    "lng": 49.41,
+    "founded": 2021,
+    "operator": "IRGC Aerospace Force",
+    "cat": "military",
+    "tags": [
+      "IRGC",
+      "underground",
+      "hardened facility",
+      "ballistic missile"
+    ],
+    "geo": "Underground facility, Shahroud region, Semnan Province",
+    "interpretation": "Iran's second launch facility is an underground space base hardened against air strikes. Together with the Imam Khomeini terminal, it represents a space program architecturally organized around the expectation of conflict."
+  },
+  {
+    "id": "palmachim",
+    "name": "Palmachim Airbase",
+    "country": "Israel",
+    "lat": 31.9,
+    "lng": 34.69,
+    "founded": 1988,
+    "operator": "IAI / IDF",
+    "cat": "military",
+    "tags": [
+      "westward launch",
+      "geopolitical constraint",
+      "IDF",
+      "Mediterranean"
+    ],
+    "geo": "Mediterranean coastal airbase, central Israel",
+    "interpretation": "Israel launches satellites westward — against Earth's rotation, at significant fuel cost — because eastward launches would fly over hostile neighboring states. No other site in this dataset so directly makes visible the way that geopolitical conflict determines the geometry of orbit."
+  },
+  {
+    "id": "musudan_ri",
+    "name": "Tonghae Satellite Launch Ground",
+    "country": "North Korea",
+    "lat": 40.85,
+    "lng": 129.66,
+    "founded": 1988,
+    "operator": "Korean People's Army / DPRK",
+    "cat": "military",
+    "tags": [
+      "North Korea",
+      "ballistic missile",
+      "military secrecy",
+      "DPRK"
+    ],
+    "geo": "Remote northeastern coast, North Hamgyong Province",
+    "interpretation": "North Korea's first launch facility was built on its remote northeastern coast. Its origins are inseparable from ballistic missile development. Distance from population centers serves both safety and secrecy."
+  },
+  {
+    "id": "alcantara",
+    "name": "Alcantara Launch Center",
+    "country": "Brazil",
+    "lat": -2.37,
+    "lng": -44.4,
+    "founded": 1990,
+    "operator": "AEB",
+    "cat": "colonial",
+    "tags": [
+      "Quilombola displacement",
+      "near-equatorial",
+      "colonial land history",
+      "contested"
+    ],
+    "geo": "Near-equatorial Atlantic coast, Maranhao state",
+    "interpretation": "Alcantara sits at 2 degrees S latitude. The land was inhabited by Quilombola communities: descendants of escaped enslaved people who had farmed the area for centuries. Their displacement is one of the most thoroughly documented cases of space infrastructure built on historically contested land."
+  },
+  {
+    "id": "hammaguir",
+    "name": "Hammaguir Launch Site",
+    "country": "Algeria (French colonial)",
+    "lat": 30.88,
+    "lng": -3.1,
+    "founded": 1952,
+    "operator": "CNES / French military (closed 1967)",
+    "cat": "colonial",
+    "tags": [
+      "French colonialism",
+      "Algeria",
+      "decolonization",
+      "Sahara"
+    ],
+    "geo": "Sahara Desert, Bechar Province — French colonial Algeria",
+    "interpretation": "Hammaguir was France's first operational space launch site, built in colonial Algeria. After independence, France retained use until 1967 under the Evian Accords, then relocated to Kourou. The shift from one colonial territory to another was not incidental: France's space program was built on its colonial geography."
+  },
+  {
+    "id": "woomera",
+    "name": "Woomera Test Range",
+    "country": "Australia",
+    "lat": -31.2,
+    "lng": 136.82,
+    "founded": 1947,
+    "operator": "Australian Space Agency / US DoD",
+    "cat": "colonial",
+    "tags": [
+      "Aboriginal land",
+      "British Empire",
+      "nuclear testing",
+      "joint US-Australia"
+    ],
+    "geo": "South Australian desert — Kokatha and Barngarla Aboriginal land",
+    "interpretation": "Woomera was established by Britain and Australia in 1947. The land belongs to Aboriginal peoples who were not consulted. The same facility was used for British nuclear weapons testing in the 1950s and 1960s, leaving radioactive contamination that persists today."
+  },
+  {
+    "id": "luigi_broglio",
+    "name": "Luigi Broglio Space Center",
+    "country": "Kenya (Italian-operated)",
+    "lat": -2.94,
+    "lng": 40.21,
+    "founded": 1967,
+    "operator": "Italian Space Research Centre (closed 1988)",
+    "cat": "colonial",
+    "tags": [
+      "Italian space program",
+      "Kenyan waters",
+      "equatorial",
+      "offshore platform"
+    ],
+    "geo": "Indian Ocean, off the Kenyan coast near Malindi",
+    "interpretation": "The Luigi Broglio Space Center was an Italian offshore launch platform in the Indian Ocean off Kenya. Italy negotiated access to Kenyan waters during the 1960s — a period when Kenya had recently gained independence but remained heavily dependent on former colonial powers."
+  },
+  {
+    "id": "vostochny",
+    "name": "Vostochny Cosmodrome",
+    "country": "Russia",
+    "lat": 51.88,
+    "lng": 128.33,
+    "founded": 2016,
+    "operator": "Roscosmos",
+    "cat": "peripheral",
+    "tags": [
+      "Russian Far East",
+      "territorial politics",
+      "labor abuses",
+      "sovereignty"
+    ],
+    "geo": "Russian Far East, Amur Oblast, taiga",
+    "interpretation": "Vostochny was built to reduce Russian dependence on Baikonur, signaling sovereignty in a region the state fears losing. Construction was marred by documented labor abuses and unpaid wages."
+  },
+  {
+    "id": "esrange",
+    "name": "Esrange Space Center",
+    "country": "Sweden",
+    "lat": 67.89,
+    "lng": 21.07,
+    "founded": 1966,
+    "operator": "Swedish Space Corporation",
+    "cat": "peripheral",
+    "tags": [
+      "Sami land",
+      "Arctic",
+      "scientific periphery",
+      "Sweden"
+    ],
+    "geo": "Arctic forest, Swedish Lapland, above the Arctic Circle",
+    "interpretation": "Esrange sits above the Arctic Circle in Swedish Lapland — traditional Sami territory. Scandinavian states have a well-documented history of treating Sami territory as a periphery available for state and commercial use."
+  },
+  {
+    "id": "mahia",
+    "name": "Rocket Lab Launch Complex 1",
+    "country": "New Zealand",
+    "lat": -39.26,
+    "lng": 177.86,
+    "founded": 2017,
+    "operator": "Rocket Lab",
+    "cat": "commercial",
+    "tags": [
+      "commercial",
+      "Maori land",
+      "permissive regulation",
+      "private"
+    ],
+    "geo": "Remote coastal peninsula, Mahia, North Island",
+    "interpretation": "Rocket Lab chose Mahia Peninsula for its clear airspace and New Zealand's permissive regulatory environment. The appeal rested partly on apparent emptiness — a perception that ignores the ongoing presence of Maori communities."
+  },
+  {
+    "id": "cape",
+    "name": "Cape Canaveral Space Force Station",
+    "country": "United States",
+    "lat": 28.49,
+    "lng": -80.58,
+    "founded": 1949,
+    "operator": "US Space Force / SpaceX / commercial",
+    "cat": "commercial",
+    "tags": [
+      "commercial",
+      "SpaceX",
+      "military inheritance",
+      "Cold War legacy"
+    ],
+    "geo": "Atlantic coast barrier island, adjacent to Kennedy Space Center",
+    "interpretation": "Cape Canaveral's transformation from a Cold War military test range into the hub of commercial space illustrates a fundamental truth: the commercial revolution in space inherited infrastructure built by state military investment."
+  },
+  {
+    "id": "boca_chica",
+    "name": "SpaceX Starbase (Boca Chica)",
+    "country": "United States (Texas)",
+    "lat": 25.99,
+    "lng": -97.16,
+    "founded": 2019,
+    "operator": "SpaceX",
+    "cat": "commercial",
+    "tags": [
+      "SpaceX",
+      "Starship",
+      "community displacement",
+      "company town"
+    ],
+    "geo": "Remote Gulf Coast barrier strip, Cameron County — US-Mexico border region",
+    "interpretation": "SpaceX built Starbase near the US-Mexico border, one of the poorest regions of the United States. The company purchased and effectively displaced the small community of Boca Chica Village through sustained economic pressure."
+  },
+  {
+    "id": "spaceport_america",
+    "name": "Spaceport America",
+    "country": "United States (New Mexico)",
+    "lat": 32.99,
+    "lng": -106.97,
+    "founded": 2011,
+    "operator": "Virgin Galactic / commercial",
+    "cat": "commercial",
+    "tags": [
+      "public subsidy",
+      "New Mexico",
+      "desert",
+      "space tourism"
+    ],
+    "geo": "Chihuahuan Desert, Sierra County, New Mexico",
+    "interpretation": "Built with $220 million in public funding from one of the poorest US states. Poor peripheral regions compete to attract private space capital by offering cheap land and public subsidy, while the economic benefits flow primarily to the operators."
+  },
+  {
+    "id": "wallops",
+    "name": "Wallops Flight Facility",
+    "country": "United States",
+    "lat": 37.94,
+    "lng": -75.47,
+    "founded": 1945,
+    "operator": "NASA / commercial",
+    "cat": "commercial",
+    "tags": [
+      "NASA",
+      "commercial",
+      "Virginia",
+      "Northrop Grumman"
+    ],
+    "geo": "Wallops Island, Virginia — barrier island, Eastern Shore",
+    "interpretation": "Wallops Island has operated as a launch facility since 1945. Originally a NACA research site, it now hosts commercial launches. Wallops represents the gradual commercialization of NASA infrastructure."
+  },
+  {
+    "id": "kodiak",
+    "name": "Pacific Spaceport Complex Alaska",
+    "country": "United States",
+    "lat": 57.44,
+    "lng": -152.34,
+    "founded": 1998,
+    "operator": "Alaska Aerospace Corporation",
+    "cat": "commercial",
+    "tags": [
+      "commercial",
+      "Alaska",
+      "polar orbit",
+      "state investment"
+    ],
+    "geo": "Kodiak Island, Alaska — remote sub-Arctic island",
+    "interpretation": "The Pacific Spaceport Complex on Kodiak Island was developed by the state of Alaska to attract the commercial launch industry. Like Spaceport America, it represents a peripheral US state investing public resources to attract commercial space capital."
+  },
+  {
+    "id": "cornwall",
+    "name": "Spaceport Cornwall",
+    "country": "United Kingdom",
+    "lat": 50.44,
+    "lng": -5.0,
+    "founded": 2023,
+    "operator": "Virgin Orbit (defunct)",
+    "cat": "commercial",
+    "tags": [
+      "commercial",
+      "Cornwall",
+      "horizontal launch",
+      "UK",
+      "Virgin Orbit"
+    ],
+    "geo": "Newquay Airport, Cornwall — peripheral UK region",
+    "interpretation": "Spaceport Cornwall was the site of the UK's first orbital launch attempt in January 2023, when Virgin Orbit's LauncherOne failed to reach orbit. Cornwall — one of the poorest regions of England — invested heavily in the space ambition as a development strategy, and was left with an unused spaceport."
+  },
+  {
+    "id": "arnhem",
+    "name": "Arnhem Space Centre",
+    "country": "Australia",
+    "lat": -12.33,
+    "lng": 136.82,
+    "founded": 2023,
+    "operator": "Equatorial Launch Australia / NASA",
+    "cat": "commercial",
+    "tags": [
+      "commercial",
+      "Aboriginal land",
+      "Northern Territory",
+      "NASA sounding rockets"
+    ],
+    "geo": "Arnhem Land, Northern Territory — Yolngu Aboriginal land",
+    "interpretation": "The Arnhem Space Centre is built on Yolngu Aboriginal land. The Yolngu people were involved in negotiations — a significant contrast to Woomera. Whether this partnership model represents a genuine shift or a more sophisticated version of the same underlying pattern remains an open question."
+  }
+];
+var map=L.map("map",{center:[20,15],zoom:2,minZoom:2,maxZoom:10,zoomControl:false});L.control.zoom({position:"bottomright"}).addTo(map);
+var tileLayers={dark:L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"&copy; OpenStreetMap &copy; CARTO",subdomains:"abcd",maxZoom:19}),color:L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{attribution:"&copy; OpenStreetMap &copy; CARTO",subdomains:"abcd",maxZoom:19}),satellite:L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{attribution:"&copy; Esri",maxZoom:19})};var currentTile="dark";tileLayers.dark.addTo(map);
+var markers=[],activeFilter="all";
+function mkIcon(c,o){return L.divIcon({className:"",html:'<div style="width:13px;height:13px;border-radius:50%;background:'+c+';border:2px solid rgba(255,255,255,.2);opacity:'+o+';box-shadow:0 0 7px '+c+'99;cursor:pointer;"></div>',iconSize:[13,13],iconAnchor:[6,6]});}
+function render(){
+  markers.forEach(function(m){map.removeLayer(m);});markers=[];
+  var vis=sites.filter(function(s){return activeFilter==="all"||s.cat===activeFilter;});
+  document.getElementById("cn").textContent=vis.length;
+  sites.forEach(function(site){
+    var iv=activeFilter==="all"||site.cat===activeFilter;
+    var col=CATS[site.cat].color;
+    var m=L.marker([site.lat,site.lng],{icon:mkIcon(col,iv?1:0.1),interactive:iv}).addTo(map);
+    if(iv){
+      m.on("click",function(){openPanel(site);});
+      m.on("mouseover",function(){m.bindPopup('<b style="font-family:serif;font-size:.85rem">'+site.name+'</b><br><span style="color:#6b6880;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em">'+site.country+'</span>',{closeButton:false,offset:[0,-6]}).openPopup();});
+      m.on("mouseout",function(){m.closePopup();});
+    }
+    markers.push(m);
+  });
+}
+function openPanel(site){
+  var cat=CATS[site.cat];
+  document.getElementById("pi").innerHTML=
+    '<div style="margin-bottom:16px"><div class="pcat" style="background:'+cat.color+'22;color:'+cat.color+';border:1px solid '+cat.color+'55">'+cat.label+'</div></div>'+
+    '<div class="pname">'+site.name+'</div>'+
+    '<div class="pcountry">'+site.country+'</div>'+
+    '<hr class="pdiv">'+
+    '<div class="plbl">Founded</div><div class="pval">'+site.founded+'</div>'+
+    '<div class="plbl">Operator</div><div class="pval">'+site.operator+'</div>'+
+    '<div class="plbl">Geographic Context</div><div class="pval">'+site.geo+'</div>'+
+    '<hr class="pdiv">'+
+    '<div class="plbl">Interpretive Note</div><div class="pint">'+site.interpretation+'</div>'+
+    '<hr class="pdiv">'+
+    '<div class="plbl">Tags</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px">'+
+    site.tags.map(function(t){return '<span style="font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid #2a2a3a;color:#6b6880">'+t+'</span>';}).join("")+
+    '</div>';
+  document.getElementById("panel").classList.add("open");
+}
+function closePanel(){document.getElementById("panel").classList.remove("open");}
+function showOverlay(id){document.getElementById("ov-"+id).classList.add("show");}
+function hideOverlay(id){document.getElementById("ov-"+id).classList.remove("show");}
+document.querySelectorAll(".fbtn").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    activeFilter=btn.dataset.cat;
+    document.querySelectorAll(".fbtn").forEach(function(b){b.classList.remove("active");});
+    btn.classList.add("active");render();closePanel();
+  });
+});
+function cycleTile(){var modes=["dark","color","satellite"];var labels={"dark":"Map: Dark","color":"Map: Color","satellite":"Map: Satellite"};var idx=modes.indexOf(currentTile);var next=modes[(idx+1)%3];map.removeLayer(tileLayers[currentTile]);tileLayers[next].addTo(map);currentTile=next;document.getElementById("tile-btn").textContent=labels[next];var tp=document.querySelector(".leaflet-tile-pane");if(tp){tp.className="leaflet-tile-pane"+(next==="color"?" color-mode":next==="satellite"?" satellite-mode":"");}}
+render();
+</script>
+</body>
+</html>
