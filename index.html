@@ -11,17 +11,19 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:"Space Mono",monospace;height:100vh;width:100vw;overflow:hidden;}
 #map{width:100vw;height:100vh;}
-.leaflet-tile-pane{filter:brightness(0.5) saturate(0.4);}.leaflet-tile-pane.color-mode{filter:none;}.leaflet-tile-pane.satellite-mode{filter:brightness(0.82);}
+.leaflet-tile-pane{filter:brightness(0.5) saturate(0.4);}
+.leaflet-tile-pane.color-mode{filter:none;}
+.leaflet-tile-pane.satellite-mode{filter:brightness(0.82);}
 #header{position:fixed;top:0;left:0;right:0;z-index:500;padding:14px 22px;display:flex;align-items:baseline;gap:14px;background:linear-gradient(to bottom,rgba(10,10,15,.97) 60%,transparent);pointer-events:none;}
 #header h1{font-family:"Libre Baskerville",serif;font-style:italic;font-size:1.1rem;color:var(--accent);}
 #header .sub{font-size:.55rem;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;}
 #nav{position:fixed;top:14px;right:16px;z-index:500;display:flex;gap:6px;}
 .nbtn{background:rgba(10,10,15,.88);border:1px solid var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;cursor:pointer;transition:all .2s;backdrop-filter:blur(6px);}
 .nbtn:hover{border-color:var(--accent);color:var(--accent);}
-#filters{position:fixed;top:52px;left:22px;z-index:500;display:flex;gap:5px;flex-wrap:wrap;max-width:400px;}
+#filters{position:fixed;top:52px;left:22px;z-index:500;display:flex;gap:5px;flex-wrap:wrap;max-width:480px;}
 .fbtn{background:rgba(10,10,15,.88);border:1px solid var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;cursor:pointer;transition:all .2s;backdrop-filter:blur(6px);}
 .fbtn:hover,.fbtn.active{border-color:var(--accent);color:var(--accent);}
-#legend{position:fixed;bottom:22px;left:22px;z-index:500;background:rgba(10,10,15,.92);border:1px solid var(--border);padding:12px 16px;font-size:.53rem;letter-spacing:.1em;text-transform:uppercase;backdrop-filter:blur(8px);}
+#legend{position:fixed;bottom:60px;left:22px;z-index:500;background:rgba(10,10,15,.92);border:1px solid var(--border);padding:12px 16px;font-size:.53rem;letter-spacing:.1em;text-transform:uppercase;backdrop-filter:blur(8px);}
 #legend .lt{color:var(--muted);margin-bottom:8px;font-size:.48rem;}
 .li{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
 .ld{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
@@ -40,7 +42,7 @@ body{background:var(--bg);color:var(--text);font-family:"Space Mono",monospace;h
 .pint em{color:var(--accent);font-style:italic;}
 .overlay{position:fixed;inset:0;z-index:700;background:rgba(10,10,15,.97);overflow-y:auto;display:none;}
 .overlay.show{display:block;}
-.ov-inner{max-width:680px;margin:0 auto;padding:52px 40px 80px;}
+.ov-inner{max-width:720px;margin:0 auto;padding:52px 40px 80px;}
 .ov-close{position:fixed;top:18px;right:22px;background:none;border:1px solid var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:.53rem;padding:5px 10px;cursor:pointer;z-index:800;}
 .ov-close:hover{border-color:var(--text);color:var(--text);}
 .ov-inner h2{font-family:"Libre Baskerville",serif;font-style:italic;font-size:1.5rem;color:var(--accent);margin-bottom:6px;}
@@ -52,40 +54,84 @@ body{background:var(--bg);color:var(--text);font-family:"Space Mono",monospace;h
 .ov-inner em{color:var(--accent);font-style:italic;}
 .ov-inner strong{color:var(--text);}
 .cat-tag{display:inline-block;font-size:.48rem;letter-spacing:.13em;text-transform:uppercase;padding:3px 8px;border:1px solid;margin:3px 3px 3px 0;}
+.gloss{background:rgba(201,168,76,.08);border-left:2px solid var(--accent);padding:8px 14px;margin:10px 0 16px;font-size:.78rem;font-family:"Libre Baskerville",serif;color:#c4c0b4;line-height:1.7;}
+.scholar-card{border:1px solid var(--border);padding:14px 18px;margin:10px 0 16px;background:rgba(255,255,255,.02);}
+.scholar-card .sc-name{font-family:"Libre Baskerville",serif;font-size:.9rem;color:var(--accent);margin-bottom:4px;}
+.scholar-card .sc-work{font-size:.7rem;color:var(--muted);margin-bottom:6px;font-style:italic;}
+.scholar-card .sc-desc{font-family:"Libre Baskerville",serif;font-size:.78rem;line-height:1.65;color:#c4c0b4;}
 #intro{position:fixed;inset:0;z-index:800;background:rgba(10,10,15,.97);display:flex;align-items:center;justify-content:center;}
-#ib{max-width:520px;padding:42px;border:1px solid var(--border);background:var(--surface);}
+#ib{max-width:560px;padding:42px;border:1px solid var(--border);background:var(--surface);}
 #ib h1{font-family:"Libre Baskerville",serif;font-style:italic;font-size:1.65rem;color:var(--accent);margin-bottom:6px;}
 #ib .isub{font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
-#ib p{font-family:"Libre Baskerville",serif;font-size:.83rem;line-height:1.8;color:#c0bcb0;margin-bottom:12px;}
+#ib .iq{font-family:"Libre Baskerville",serif;font-size:.88rem;line-height:1.7;color:var(--text);margin-bottom:10px;padding:10px 14px;border-left:2px solid var(--accent);background:rgba(201,168,76,.06);}
+#ib .ia{font-family:"Libre Baskerville",serif;font-size:.82rem;line-height:1.75;color:#c0bcb0;margin-bottom:14px;}
+#ib p{font-family:"Libre Baskerville",serif;font-size:.8rem;line-height:1.8;color:#c0bcb0;margin-bottom:10px;}
 #ibtn{margin-top:20px;background:none;border:1px solid var(--accent);color:var(--accent);font-family:"Space Mono",monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;padding:9px 18px;cursor:pointer;transition:all .2s;}
 #ibtn:hover{background:var(--accent);color:var(--bg);}
 #cnt{position:fixed;bottom:22px;right:22px;font-size:.5rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;z-index:500;}
 #cnt span{color:var(--accent);}
+#timeline-bar{position:fixed;bottom:0;left:0;right:0;z-index:500;background:rgba(10,10,15,.95);border-top:1px solid var(--border);padding:8px 22px;display:none;align-items:center;gap:12px;}
+#timeline-bar.show{display:flex;}
+#tl-label{font-size:.55rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+#tl-slider{flex:1;accent-color:var(--accent);cursor:pointer;}
+#tl-year{font-size:.65rem;color:var(--text);white-space:nowrap;min-width:40px;}
+#tl-play{background:none;border:1px solid var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:.48rem;padding:4px 8px;cursor:pointer;white-space:nowrap;}
+#tl-play:hover{border-color:var(--accent);color:var(--accent);}
+#tl-close{background:none;border:none;color:var(--muted);font-size:.8rem;cursor:pointer;padding:0 4px;}
+#tl-close:hover{color:var(--text);}
+#search-table-wrap{position:fixed;inset:0;z-index:700;background:rgba(10,10,15,.97);overflow-y:auto;display:none;}
+#search-table-wrap.show{display:block;}
+#st-inner{max-width:960px;margin:0 auto;padding:52px 30px 80px;}
+#st-inner h2{font-family:"Libre Baskerville",serif;font-style:italic;font-size:1.4rem;color:var(--accent);margin-bottom:20px;}
+#st-search{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);font-family:"Space Mono",monospace;font-size:.65rem;padding:8px 12px;margin-bottom:10px;outline:none;}
+#st-search:focus{border-color:var(--accent);}
+#st-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.st-fbtn{background:rgba(10,10,15,.88);border:1px solid var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;cursor:pointer;}
+.st-fbtn:hover,.st-fbtn.active{border-color:var(--accent);color:var(--accent);}
+#st-table{width:100%;border-collapse:collapse;font-size:.6rem;}
+#st-table th{background:rgba(201,168,76,.1);color:var(--accent);font-family:"Space Mono",monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;}
+#st-table th:hover{color:var(--text);}
+#st-table td{padding:8px 10px;border-bottom:1px solid rgba(42,42,58,.5);color:#c4c0b4;font-family:"Libre Baskerville",serif;vertical-align:top;line-height:1.5;}
+#st-table tr:hover td{background:rgba(255,255,255,.03);}
+.st-cat{font-size:.45rem;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border:1px solid;border-radius:2px;}
+#st-close{position:fixed;top:18px;right:22px;background:none;border:1px solid var(--border);color:var(--muted);font-family:"Space Mono",monospace;font-size:.53rem;padding:5px 10px;cursor:pointer;z-index:800;}
+#st-close:hover{border-color:var(--text);color:var(--text);}
 .leaflet-popup-content-wrapper{background:rgba(12,12,20,.95);border:1px solid #2a2a3a;border-radius:0;color:#e8e4d8;font-family:"Space Mono",monospace;font-size:.62rem;}
 .leaflet-popup-tip{background:#12121a;}
 .leaflet-popup-content{margin:9px 13px;}
 </style>
 </head>
 <body>
+
+<!-- INTRO with Q&A -->
 <div id="intro">
   <div id="ib">
     <h1>The Politics of Place</h1>
-    <div class="isub">A Digital Humanities Project — Jeongwoo Jang, KAIST HSS/DHS283 2026S</div>
-    <p>Why are the world's major space launch sites located where they are? The standard answer is technical: proximity to the equator, coastal access, remote areas. But many launch sites sit in former colonial territories, on islands inhabited by indigenous communities, or in deserts states have historically treated as empty and expendable.</p>
-    <p><em>The geography of space infrastructure is not only an engineering problem — it is a political one.</em></p>
-    <p style="font-size:.62rem;color:var(--muted);font-family:'Space Mono',monospace;margin-top:6px;">Click any marker to read its interpretive note. Use filters to explore by category. See About / Conclusion / Data &amp; Method for full context.</p>
+    <div class="isub">Jeongwoo Jang · KAIST HSS/DHS283 · 2026 Spring</div>
+    <div class="iq">Why are the world&#39;s major space launch sites located where they are, and what does their spatial distribution reveal about the relationship between technology, geography, and power?</div>
+    <div class="ia">The standard answer is technical: equatorial proximity, coastal access, low population density. But the evidence points elsewhere. Launch sites are disproportionately located in former colonial territories, on indigenous lands, in deserts and remote peripheries that states have historically treated as available and expendable. <em>The geography of space is not neutral — it is a map of power.</em></div>
+    <p style="font-size:.62rem;color:var(--muted);font-family:'Space Mono',monospace;">Click any marker · Filter by category · Use Timeline to see construction order · Search table for full data</p>
     <button id="ibtn" onclick="document.getElementById('intro').style.display='none'">Explore the Map &#8594;</button>
   </div>
 </div>
+
+<!-- HEADER -->
 <div id="header">
   <h1>The Politics of Place</h1>
   <span class="sub">Geography &amp; Power of World Space Launch Sites — 33 Sites</span>
 </div>
-<div id="nav"><button class="nbtn" id="tile-btn" onclick="cycleTile()">Map: Dark</button>
+
+<!-- NAV -->
+<div id="nav">
+  <button class="nbtn" id="tile-btn" onclick="cycleTile()">Map: Dark</button>
+  <button class="nbtn" onclick="toggleTimeline()">Timeline</button>
+  <button class="nbtn" onclick="showTable()">Table</button>
   <button class="nbtn" onclick="showOverlay('about')">About</button>
   <button class="nbtn" onclick="showOverlay('conclusion')">Conclusion</button>
   <button class="nbtn" onclick="showOverlay('data')">Data &amp; Method</button>
 </div>
+
+<!-- FILTERS -->
 <div id="filters">
   <button class="fbtn active" data-cat="all">All (33)</button>
   <button class="fbtn" data-cat="military">Military Origin</button>
@@ -94,11 +140,17 @@ body{background:var(--bg);color:var(--text);font-family:"Space Mono",monospace;h
   <button class="fbtn" data-cat="commercial">Commercial</button>
   <button class="fbtn" data-cat="peripheral">Peripheral Land</button>
 </div>
+
+<!-- MAP -->
 <div id="map"></div>
+
+<!-- SITE PANEL -->
 <div id="panel">
   <button id="pc" onclick="closePanel()">&#10005; Close</button>
   <div id="pi"></div>
 </div>
+
+<!-- LEGEND -->
 <div id="legend">
   <div class="lt">Category</div>
   <div class="li"><div class="ld" style="background:#c4614a"></div>Military Origin</div>
@@ -107,76 +159,161 @@ body{background:var(--bg);color:var(--text);font-family:"Space Mono",monospace;h
   <div class="li"><div class="ld" style="background:#7b9e87"></div>Commercial</div>
   <div class="li"><div class="ld" style="background:#9b7bb5"></div>Peripheral Land</div>
 </div>
+
 <div id="cnt">Showing <span id="cn">33</span> of 33 sites</div>
 
+<!-- TIMELINE BAR -->
+<div id="timeline-bar">
+  <span id="tl-label">Timeline</span>
+  <input type="range" id="tl-slider" min="1946" max="2023" value="2023" step="1">
+  <span id="tl-year">2023</span>
+  <button id="tl-play" onclick="playTimeline()">&#9654; Play</button>
+  <button id="tl-close" onclick="toggleTimeline()">&#10005;</button>
+</div>
+
+<!-- SEARCH TABLE -->
+<div id="search-table-wrap">
+  <button id="st-close" onclick="hideTable()">&#10005; Close</button>
+  <div id="st-inner">
+    <h2>Search &amp; Sort Launch Sites</h2>
+    <input id="st-search" type="text" placeholder="Search by name, country, operator, tags..." oninput="filterTable()">
+    <div id="st-filters">
+      <button class="st-fbtn active" data-cat="all" onclick="setTableCat(this,'all')">All</button>
+      <button class="st-fbtn" data-cat="military" onclick="setTableCat(this,'military')">Military</button>
+      <button class="st-fbtn" data-cat="colonial" onclick="setTableCat(this,'colonial')">Colonial</button>
+      <button class="st-fbtn" data-cat="national" onclick="setTableCat(this,'national')">National Prestige</button>
+      <button class="st-fbtn" data-cat="commercial" onclick="setTableCat(this,'commercial')">Commercial</button>
+      <button class="st-fbtn" data-cat="peripheral" onclick="setTableCat(this,'peripheral')">Peripheral</button>
+    </div>
+    <table id="st-table">
+      <thead>
+        <tr>
+          <th onclick="sortTable('name')">Site &#8597;</th>
+          <th onclick="sortTable('country')">Country &#8597;</th>
+          <th onclick="sortTable('founded')">Founded &#8597;</th>
+          <th onclick="sortTable('operator')">Operator &#8597;</th>
+          <th onclick="sortTable('cat')">Category &#8597;</th>
+          <th>Key Notes</th>
+        </tr>
+      </thead>
+      <tbody id="st-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ABOUT OVERLAY -->
 <div id="ov-about" class="overlay">
   <button class="ov-close" onclick="hideOverlay('about')">&#10005; Close</button>
   <div class="ov-inner">
     <h2>About This Project</h2>
     <div class="ov-sub">Jeongwoo Jang · KAIST HSS/DHS283 · 2026 Spring</div>
+
+    <h3>Research Question &amp; Answer</h3>
+    <p style="border-left:2px solid var(--accent);padding:8px 14px;background:rgba(201,168,76,.06);font-family:'Libre Baskerville',serif;font-size:.88rem;color:var(--text);">Why are the world&#39;s major space launch sites located where they are, and what does their spatial distribution reveal about the relationship between technology, geography, and power?</p>
+    <p>The evidence across 33 sites points to a consistent answer: launch sites are disproportionately located in places that states could use without significant political resistance — former colonial territories, indigenous lands, remote deserts, depopulated peripheries. This is not accidental. It reflects structural patterns in how states access land, and which communities have historically had the power to refuse.</p>
+
     <h3>Why This Project Matters</h3>
-    <p>Space launch sites are usually discussed in terms of engineering. But when you look at where the world's major spaceports are actually located — a former French penal colony in South America, the Kazakh steppe built by Gulag labor, a Brazilian coastal strip that displaced Quilombola communities, a desert on Yi ethnic minority land in Sichuan — a different pattern emerges. The geography of space infrastructure reflects not only engineering logic but also the political history of which lands and populations states have treated as available, expendable, or controllable.</p>
-    <p>This matters because it changes how we understand space exploration. If we treat launch sites as neutral technical choices, we miss the way that technological progress has repeatedly been built on the dispossession or marginalization of specific communities. For humanities scholars, this project demonstrates that technological infrastructure is a legitimate object of spatial and political analysis. For general readers, it offers a way of seeing the space age that goes beyond the heroic narrative of rockets and astronauts.</p>
-    <h3>Research Question</h3>
-    <p>Why are the world's major space launch sites located where they are, and what does their spatial distribution reveal about the relationship between technology, geography, and power?</p>
+    <p>Space launch sites are usually discussed in terms of engineering. But when you look at where the world&#39;s major spaceports are actually located, a different pattern emerges. The geography of space infrastructure reflects not only engineering logic but also the political history of which lands and populations states have treated as available, expendable, or controllable.</p>
+    <p>This matters because it changes how we understand space exploration. If we treat launch sites as neutral technical choices, we miss the way that technological progress has repeatedly been built on the dispossession or marginalization of specific communities.</p>
+
+    <h3>Key Terms Explained</h3>
+    <div class="gloss"><strong>Penal colony</strong> — A remote territory used by a colonial power to imprison and exile convicted criminals, often far from the metropolitan center. France operated penal colonies in French Guiana (including the infamous Devil&#39;s Island) from 1852 to 1953. The same territory later became the site of the Kourou space center.</div>
+    <div class="gloss"><strong>Gulag</strong> — The Soviet system of forced labor camps, operational from the 1930s to the 1950s, in which millions of prisoners were used as a labor force for major infrastructure projects. Baikonur Cosmodrome was constructed in large part by military conscripts working under conditions similar to those of the Gulag era.</div>
+    <div class="gloss"><strong>Quilombola</strong> — Communities descended from escaped enslaved Africans who established autonomous settlements (quilombos) in Brazil during the colonial period. Quilombola communities near Alcântara, Maranhão, had farmed the land for centuries before being displaced to make way for Brazil&#39;s space launch center.</div>
+    <div class="gloss"><strong>Yi (彝) people</strong> — One of China&#39;s recognized ethnic minorities, with a distinct language, culture, and history, predominantly located in Sichuan, Yunnan, and Guizhou provinces. The Xichang Satellite Launch Center was built in Yi territory without meaningful consultation with the local community.</div>
+    <div class="gloss"><strong>Sámi people</strong> — The indigenous people of Scandinavia (Sápmi), with traditional territories spanning northern Norway, Sweden, Finland, and Russia. The Esrange Space Center in Swedish Lapland is located in Sámi territory.</div>
+
     <h3>Category Framework</h3>
     <div style="margin:16px 0;">
-      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#c4614a;border-color:#c4614a44">Military Origin</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites originating from Cold War missile programs or active military installations.</span></div>
-      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#c9a84c;border-color:#c9a84c44">Colonial Territory</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites built on land controlled through colonial or imperial relationships.</span></div>
-      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#5b8fa8;border-color:#5b8fa844">National Prestige</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites built primarily as symbols of national technological ambition.</span></div>
-      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#7b9e87;border-color:#7b9e8744">Commercial</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites operated primarily by private companies, often inheriting military infrastructure or seeking low-regulation environments.</span></div>
+      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#c4614a;border-color:#c4614a44">Military Origin</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites originating from Cold War missile programs or active military installations. Engineering and strategic purposes were inseparable.</span></div>
+      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#c9a84c;border-color:#c9a84c44">Colonial Territory</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites built on land controlled through colonial or imperial relationships, where the host population had limited ability to refuse.</span></div>
+      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#5b8fa8;border-color:#5b8fa844">National Prestige</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites built primarily as symbols of national technological ambition, often in domestic peripheries.</span></div>
+      <div style="margin-bottom:10px"><span class="cat-tag" style="color:#7b9e87;border-color:#7b9e8744">Commercial</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites operated primarily by private companies, often inheriting military infrastructure or seeking low-regulation, low-cost environments.</span></div>
       <div style="margin-bottom:10px"><span class="cat-tag" style="color:#9b7bb5;border-color:#9b7bb544">Peripheral Land</span><span style="font-size:.75rem;font-family:'Libre Baskerville',serif;color:#c4c0b4"> — Sites on marginal, depopulated, or indigenous territory chosen because the state could use it without significant political resistance.</span></div>
     </div>
-    <h3>Primary Scholarly References</h3>
-    <p>
-      This project draws mainly on Peter Redfield's 
-      <em>Space in the Tropics: From Convicts to Rockets in French Guiana</em> 
-      (University of California Press, 2000), which provides a framework for reading 
-      launch sites as politically and historically meaningful spaces rather than 
-      neutral technical facilities.
-    </p>
-    <p>
-      It also uses Immanuel Wallerstein's world-systems theory, especially 
-      <em>The Modern World-System</em> (Academic Press, 1974), to interpret how 
-      peripheral territories are repeatedly used to support technological, military, 
-      and state-centered ambitions.
-    </p>
+
+    <h3>Scholars &amp; Further Reading</h3>
+    <div class="scholar-card">
+      <div class="sc-name">Peter Redfield</div>
+      <div class="sc-work">Space in the Tropics: From Convicts to Rockets in French Guiana (University of California Press, 2000)</div>
+      <div class="sc-desc">The primary humanistic framework for this project. Redfield traces how French Guiana — a territory that served as a site of colonial punishment — was transformed into a high-tech space launch facility, arguing that space infrastructure does not transcend political history but is built on top of it. His analysis of Kourou provides the core interpretive model: colonial land relationships directly shape the placement of space infrastructure, and that relationship persists even after formal decolonization.</div>
+    </div>
+    <div class="scholar-card">
+      <div class="sc-name">Immanuel Wallerstein (1930–2019)</div>
+      <div class="sc-work">The Modern World-System (Academic Press, 1974)</div>
+      <div class="sc-desc">Sociologist and historical social scientist who developed World-Systems Theory. Wallerstein argued that the global economy operates through a structural division between core states — which command advanced technology and capital — and peripheral regions, which are systematically made available for activities that core states cannot or will not conduct near their own population centers. This framework explains why launch sites, across different countries, eras, and operators, so consistently appear in remote, sparsely inhabited, or politically subordinate locations.</div>
+    </div>
+    <div class="scholar-card">
+      <div class="sc-name">Asif Azam Siddiqi</div>
+      <div class="sc-work">Challenge to Apollo: The Soviet Union and the Space Race, 1945–1974 (NASA, 2000); The Red Rockets&#39; Glare: Spaceflight and the Soviet Imagination (Cambridge UP, 2010)</div>
+      <div class="sc-desc">A leading historian of the Soviet space program. Siddiqi&#39;s work documents how Soviet space infrastructure — including Baikonur and Kapustin Yar — was built within the context of Cold War military strategy, state secrecy, and forced labor. His research is essential for understanding the military origins of Russian launch geography.</div>
+    </div>
+    <div class="scholar-card">
+      <div class="sc-name">Hyoung Joon An (안형준)</div>
+      <div class="sc-work">National Aspirations, Imagined Futures, and Space Exploration: the Origin and Development of Korean Space Program 1958–2013 (PhD dissertation, Georgia Institute of Technology, 2015)</div>
+      <div class="sc-desc">The definitive scholarly history of South Korea&#39;s space program in English. An traces how South Korea&#39;s space ambitions were driven by four successive rationales: modernization (1950s–60s), self-defense (1970–84), economic security (1985–97), and national prestige (1998–2013). His analysis directly informs this project&#39;s classification of Naro Space Center as a "National Prestige" site, and demonstrates why the location in Jeolla Province — historically marginalized in South Korean politics — reflects the same center-periphery dynamic visible across the global dataset.</div>
+    </div>
   </div>
 </div>
 
+<!-- CONCLUSION OVERLAY -->
 <div id="ov-conclusion" class="overlay">
   <button class="ov-close" onclick="hideOverlay('conclusion')">&#10005; Close</button>
   <div class="ov-inner">
     <h2>Conclusion</h2>
     <div class="ov-sub">What the Map Argues</div>
+
     <h3>The Pattern</h3>
     <p>Across the thirty-three sites examined in this project, a consistent pattern emerges: launch sites are disproportionately located in places that states could use without significant political resistance. Deserts, remote islands, former colonial territories, indigenous lands, depopulated peripheries — these are not incidentally where rockets launch from. They are where rockets launch from <em>because</em> states found them available.</p>
+
     <h3>Three Key Findings</h3>
-    <p><strong>1. Military infrastructure became space infrastructure.</strong> The majority of major launch sites originated as military missile facilities during the Cold War. The space age did not begin from scratch — it began from a military geography already in place.</p>
-    <p><strong>2. Colonial and peripheral territories bear a disproportionate share of the burden.</strong> Kourou, Alcantara, Woomera, Hammaguir, Luigi Broglio — in each case, a region with less political power hosts infrastructure that serves national or supranational ambitions. The benefits flow outward; the land use remains local.</p>
-    <p><strong>3. The commercial turn in space has not changed this pattern.</strong> Rocket Lab's Mahia Peninsula, Spaceport America, Boca Chica, Spaceport Cornwall — commercial space has largely inherited or replicated the same geographic logic. Private capital seeks the same qualities military planners sought: remoteness, low regulation, and land that can be used.</p>
+    <p><strong>1. Military infrastructure became space infrastructure.</strong> The majority of major launch sites originated as military missile facilities during the Cold War. Kapustin Yar (1946) was built using captured German V-2 technology and engineers. Baikonur (1955) was selected for its remoteness from Soviet population centers and foreign surveillance, constructed by military conscripts. Kennedy Space Center (1962) was built on a military test range that had operated since 1949. The space age did not begin from scratch — it began from a military geography already in place, and civilian and commercial programs inherited that geography rather than choosing it freely.</p>
+    <p><strong>2. Colonial and peripheral territories bear a disproportionate share of the burden.</strong> Peter Redfield&#39;s analysis of Kourou shows the pattern most clearly: the same territory in French Guiana that served as a site of colonial punishment (Devil&#39;s Island penal colony, 1852–1953) became France&#39;s primary launch facility after France lost its Algerian site at Hammaguir when Algeria achieved independence in 1962. France did not abandon colonial geography — it relocated it. Alcântara in Brazil tells a similar story: land farmed for centuries by Quilombola communities was seized for a space program whose benefits flowed to the Brazilian state and its international partners, not to the displaced communities. In each case — Kourou, Alcântara, Woomera, Hammaguir, Luigi Broglio off the Kenyan coast — a region with less political power hosts infrastructure that serves national or supranational ambitions.</p>
+    <p><strong>3. The commercial turn in space has not changed this pattern.</strong> SpaceX&#39;s Starbase in Boca Chica, Texas was built by displacing a small community near the US-Mexico border, one of the poorest regions in the United States. Spaceport America was funded by $220 million in public money from New Mexico — one of the poorest US states — for an industry whose benefits have been slow to reach the local economy. Rocket Lab&#39;s Māhia Peninsula facility was chosen for its apparent emptiness, a perception that ignores the ongoing presence of Māori communities. Commercial space has largely inherited or replicated the same geographic logic as its military and colonial predecessors.</p>
+
     <h3>What This Project Cannot Show</h3>
-    <p>A map can show where launch sites are located. It cannot show labor conditions, environmental consequences, the experiences of displaced communities, or the full complexity of political negotiations. The interpretive notes are starting points, not conclusions.</p>
+    <p>A map can show where launch sites are located. It cannot show the labor conditions of the workers who built them, the environmental consequences for surrounding ecosystems, the experiences of displaced communities, or the full complexity of political negotiations that preceded each site&#39;s construction. The interpretive notes are starting points, not conclusions.</p>
+
     <h3>A Final Thought</h3>
-    <p>The space age is often narrated as humanity's escape from earthly constraints. This project insists that the infrastructure of transcendence is built on earth, in specific places, under specific political conditions. <em>The geography of space is not neutral. It never was.</em></p>
+    <p>The space age is often narrated as humanity&#39;s escape from earthly constraints. This project insists that the infrastructure of transcendence is built on earth, in specific places, under specific political conditions. <em>The geography of space is not neutral. It never was.</em></p>
   </div>
 </div>
 
+<!-- DATA & METHOD OVERLAY -->
 <div id="ov-data" class="overlay">
   <button class="ov-close" onclick="hideOverlay('data')">&#10005; Close</button>
   <div class="ov-inner">
     <h2>Data &amp; Method</h2>
     <div class="ov-sub">Transparency, Sources, and Interpretive Choices</div>
+
     <h3>Dataset Overview</h3>
     <p>This project examines <strong>33 major operational or historically significant spaceports</strong> selected from a broader list of globally active launch facilities. The dataset was constructed manually. Sites were selected to represent geographic diversity (all inhabited continents), operator diversity (state, military, intergovernmental, commercial), and historical diversity (1946 to 2023). Colonial Territory and Commercial categories were intentionally expanded to reflect their global significance.</p>
+    <p>The complete structured dataset — including all 33 sites with coordinates, founding year, operator, category, geographic context, and tags — is available as an Excel spreadsheet submitted as part of the course assignment packet.</p>
+
     <h3>Data Sources</h3>
-    <p>Factual data verified through Wikipedia's "List of rocket launch sites" cross-referenced against official agency websites: NASA, ESA, JAXA, KARI, ISRO, CNSA, Roscosmos, Rocket Lab, SpaceX.</p>
-    <h3>Category Construction</h3>
-    <p>The five categories were developed inductively after the initial dataset was assembled — categorization followed observation, not the reverse. The primary theoretical framework comes from Peter Redfield's <em>Space in the Tropics</em> (2000).</p>
+    <p>Factual data (coordinates, founding year, operator) verified through Wikipedia&#39;s <a href="https://en.wikipedia.org/wiki/List_of_rocket_launch_sites" target="_blank" style="color:var(--accent)">List of rocket launch sites</a> cross-referenced against official agency websites:</p>
+    <ul>
+      <li>NASA — <a href="https://www.nasa.gov" target="_blank" style="color:var(--accent)">nasa.gov</a></li>
+      <li>ESA — <a href="https://www.esa.int" target="_blank" style="color:var(--accent)">esa.int</a></li>
+      <li>JAXA — <a href="https://global.jaxa.jp" target="_blank" style="color:var(--accent)">global.jaxa.jp</a></li>
+      <li>KARI — <a href="https://www.kari.re.kr/eng" target="_blank" style="color:var(--accent)">kari.re.kr/eng</a></li>
+      <li>ISRO — <a href="https://www.isro.gov.in" target="_blank" style="color:var(--accent)">isro.gov.in</a></li>
+      <li>CNSA — <a href="http://www.cnsa.gov.cn/english" target="_blank" style="color:var(--accent)">cnsa.gov.cn/english</a></li>
+      <li>Roscosmos — <a href="https://www.en.wikipedia.org/wiki/Roscosmos" target="_blank" style="color:var(--accent)">en.wikipedia.org/wiki/Roscosmos</a></li>
+      <li>Rocket Lab — <a href="https://www.rocketlabusa.com" target="_blank" style="color:var(--accent)">rocketlabusa.com</a></li>
+      <li>SpaceX — <a href="https://www.spacex.com" target="_blank" style="color:var(--accent)">spacex.com</a></li>
+    </ul>
+
+    <h3>Category Construction and Theoretical Basis</h3>
+    <p>The five categories were developed inductively after the initial dataset was assembled — categorization followed observation, not the reverse. I first compiled a neutral list of operational spaceports, and only then applied analytical frameworks to identify the patterns that emerged.</p>
+    <p><strong>Peter Redfield</strong>&#39;s <em>Space in the Tropics</em> (2000) provides the theoretical model for the <em>Colonial Territory</em> category, demonstrating how colonial land relationships directly shape the placement of high-tech infrastructure.</p>
+    <p><strong>Immanuel Wallerstein</strong>&#39;s World-Systems Theory (<em>The Modern World-System</em>, 1974) provides the basis for the <em>Peripheral Land</em> and <em>Military Origin</em> categories: core states command technology and capital; peripheral regions are made available for infrastructure that serves core interests. This explains why launch sites so consistently appear in remote or politically subordinate locations, regardless of era or operator type.</p>
+
     <h3>Interpretive Notes</h3>
-    <p>All interpretive notes are original analysis by Jeongwoo Jang, drawing on publicly available historical information and the project's analytical framework.</p>
+    <p>All interpretive notes are original analysis by Jeongwoo Jang (2026), drawing on publicly available historical information and the project&#39;s analytical framework. They are starting points for inquiry, not comprehensive accounts.</p>
+
     <h3>AI Usage</h3>
-    <p>This project was developed with assistance from Claude (Anthropic, claude-sonnet-4-6, 2026) for HTML/CSS/JavaScript coding, and dataset structuring. All analytical arguments, category choices, and final content reflect the author's own intellectual decisions.</p>
+    <p>This project was developed with assistance from Claude (Anthropic, claude-sonnet-4-6, 2026). AI assistance was used for: HTML/CSS/JavaScript coding of the interactive map and dataset structuring. All analytical arguments, category choices, research questions, and final textual content reflect the author&#39;s own intellectual decisions.</p>
   </div>
 </div>
 
@@ -189,6 +326,7 @@ var CATS={
   commercial:{color:"#7b9e87",label:"Commercial"},
   peripheral:{color:"#9b7bb5",label:"Peripheral Land"}
 };
+
 var sites=[
   {
     "id": "baikonur",
@@ -786,26 +924,48 @@ var sites=[
     "interpretation": "The Arnhem Space Centre is built on Yolngu Aboriginal land. The Yolngu people were involved in negotiations — a significant contrast to Woomera. Whether this partnership model represents a genuine shift or a more sophisticated version of the same underlying pattern remains an open question."
   }
 ];
-var map=L.map("map",{center:[20,15],zoom:2,minZoom:2,maxZoom:10,zoomControl:false});L.control.zoom({position:"bottomright"}).addTo(map);
-var tileLayers={dark:L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"&copy; OpenStreetMap &copy; CARTO",subdomains:"abcd",maxZoom:19}),color:L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{attribution:"&copy; OpenStreetMap &copy; CARTO",subdomains:"abcd",maxZoom:19}),satellite:L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{attribution:"&copy; Esri",maxZoom:19})};var currentTile="dark";tileLayers.dark.addTo(map);
-var markers=[],activeFilter="all";
-function mkIcon(c,o){return L.divIcon({className:"",html:'<div style="width:13px;height:13px;border-radius:50%;background:'+c+';border:2px solid rgba(255,255,255,.2);opacity:'+o+';box-shadow:0 0 7px '+c+'99;cursor:pointer;"></div>',iconSize:[13,13],iconAnchor:[6,6]});}
-function render(){
+
+var map=L.map("map",{center:[20,15],zoom:2,minZoom:2,maxZoom:10,zoomControl:false});
+L.control.zoom({position:"bottomright"}).addTo(map);
+var tileLayers={
+  dark:L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"&copy; OpenStreetMap &copy; CARTO",subdomains:"abcd",maxZoom:19}),
+  color:L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{attribution:"&copy; OpenStreetMap &copy; CARTO",subdomains:"abcd",maxZoom:19}),
+  satellite:L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{attribution:"&copy; Esri",maxZoom:19})
+};
+var currentTile="dark";tileLayers.dark.addTo(map);
+
+var markers=[],activeFilter="all",tlActive=false,tlInterval=null;
+
+function mkIcon(c,o,r){
+  r=r||13;
+  return L.divIcon({className:"",html:'<div style="width:'+r+'px;height:'+r+'px;border-radius:50%;background:'+c+';border:2px solid rgba(255,255,255,.2);opacity:'+o+';box-shadow:0 0 7px '+c+'99;cursor:pointer;transition:all .3s;"></div>',iconSize:[r,r],iconAnchor:[r/2,r/2]});
+}
+
+function render(yearFilter){
   markers.forEach(function(m){map.removeLayer(m);});markers=[];
-  var vis=sites.filter(function(s){return activeFilter==="all"||s.cat===activeFilter;});
+  var vis=sites.filter(function(s){
+    var catOk=activeFilter==="all"||s.cat===activeFilter;
+    var yrOk=!yearFilter||s.founded<=yearFilter;
+    return catOk&&yrOk;
+  });
   document.getElementById("cn").textContent=vis.length;
   sites.forEach(function(site){
-    var iv=activeFilter==="all"||site.cat===activeFilter;
-    var col=CATS[site.cat].color;
-    var m=L.marker([site.lat,site.lng],{icon:mkIcon(col,iv?1:0.1),interactive:iv}).addTo(map);
-    if(iv){
+    var catOk=activeFilter==="all"||site.cat===activeFilter;
+    var yrOk=!yearFilter||site.founded<=yearFilter;
+    var isVis=catOk&&yrOk;
+    var color=CATS[site.cat].color;
+    var m=L.marker([site.lat,site.lng],{icon:mkIcon(color,isVis?1:0.07),interactive:isVis}).addTo(map);
+    if(isVis){
       m.on("click",function(){openPanel(site);});
-      m.on("mouseover",function(){m.bindPopup('<b style="font-family:serif;font-size:.85rem">'+site.name+'</b><br><span style="color:#6b6880;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em">'+site.country+'</span>',{closeButton:false,offset:[0,-6]}).openPopup();});
+      m.on("mouseover",function(){
+        m.bindPopup('<b style="font-family:serif;font-size:.85rem">'+site.name+'</b><br><span style="color:#6b6880;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em">'+site.country+' · '+site.founded+'</span>',{closeButton:false,offset:[0,-6]}).openPopup();
+      });
       m.on("mouseout",function(){m.closePopup();});
     }
     markers.push(m);
   });
 }
+
 function openPanel(site){
   var cat=CATS[site.cat];
   document.getElementById("pi").innerHTML=
@@ -825,17 +985,110 @@ function openPanel(site){
     '</div>';
   document.getElementById("panel").classList.add("open");
 }
+
 function closePanel(){document.getElementById("panel").classList.remove("open");}
 function showOverlay(id){document.getElementById("ov-"+id).classList.add("show");}
 function hideOverlay(id){document.getElementById("ov-"+id).classList.remove("show");}
+
+function cycleTile(){
+  var modes=["dark","color","satellite"];
+  var labels={"dark":"Map: Dark","color":"Map: Color","satellite":"Map: Satellite"};
+  var idx=modes.indexOf(currentTile);
+  var next=modes[(idx+1)%3];
+  map.removeLayer(tileLayers[currentTile]);
+  tileLayers[next].addTo(map);
+  currentTile=next;
+  document.getElementById("tile-btn").textContent=labels[next];
+  var tp=document.querySelector(".leaflet-tile-pane");
+  if(tp){tp.className="leaflet-tile-pane"+(next==="color"?" color-mode":next==="satellite"?" satellite-mode":"");}
+}
+
+// TIMELINE
+function toggleTimeline(){
+  var bar=document.getElementById("timeline-bar");
+  tlActive=!tlActive;
+  bar.classList.toggle("show",tlActive);
+  if(!tlActive){if(tlInterval)clearInterval(tlInterval);render();}
+  else{updateTimeline();}
+}
+
+function updateTimeline(){
+  var yr=parseInt(document.getElementById("tl-slider").value);
+  document.getElementById("tl-year").textContent=yr;
+  render(yr);
+}
+
+document.getElementById("tl-slider").addEventListener("input",updateTimeline);
+
+function playTimeline(){
+  if(tlInterval){clearInterval(tlInterval);tlInterval=null;document.getElementById("tl-play").textContent="&#9654; Play";return;}
+  var sl=document.getElementById("tl-slider");
+  sl.value=1946;
+  updateTimeline();
+  document.getElementById("tl-play").textContent="&#9646;&#9646; Pause";
+  tlInterval=setInterval(function(){
+    var v=parseInt(sl.value);
+    if(v>=2023){clearInterval(tlInterval);tlInterval=null;document.getElementById("tl-play").textContent="&#9654; Play";return;}
+    sl.value=v+1;
+    updateTimeline();
+  },120);
+}
+
+// TABLE
+var tableCat="all",tableSortKey="founded",tableSortAsc=true;
+
+function showTable(){
+  document.getElementById("search-table-wrap").classList.add("show");
+  renderTable();
+}
+function hideTable(){document.getElementById("search-table-wrap").classList.remove("show");}
+
+function setTableCat(btn,cat){
+  tableCat=cat;
+  document.querySelectorAll(".st-fbtn").forEach(function(b){b.classList.remove("active");});
+  btn.classList.add("active");
+  renderTable();
+}
+
+function sortTable(key){
+  if(tableSortKey===key)tableSortAsc=!tableSortAsc;
+  else{tableSortKey=key;tableSortAsc=true;}
+  renderTable();
+}
+
+function filterTable(){renderTable();}
+
+function renderTable(){
+  var q=document.getElementById("st-search").value.toLowerCase();
+  var rows=sites.filter(function(s){
+    var catOk=tableCat==="all"||s.cat===tableCat;
+    var qOk=!q||(s.name+s.country+s.operator+s.tags.join(" ")).toLowerCase().includes(q);
+    return catOk&&qOk;
+  });
+  rows.sort(function(a,b){
+    var av=a[tableSortKey],bv=b[tableSortKey];
+    if(typeof av==="string")av=av.toLowerCase();
+    if(typeof bv==="string")bv=bv.toLowerCase();
+    return tableSortAsc?(av>bv?1:-1):(av<bv?1:-1);
+  });
+  var cat_labels={"military":"Military Origin","colonial":"Colonial Territory","national":"National Prestige","commercial":"Commercial","peripheral":"Peripheral Land"};
+  var cat_colors={"military":"#c4614a","colonial":"#c9a84c","national":"#5b8fa8","commercial":"#7b9e87","peripheral":"#9b7bb5"};
+  var html=rows.map(function(s){
+    return "<tr><td><strong style='color:var(--text);font-size:.7rem'>"+s.name+"</strong></td><td>"+s.country+"</td><td style='text-align:center'>"+s.founded+"</td><td>"+s.operator+"</td><td><span class='st-cat' style='color:"+cat_colors[s.cat]+";border-color:"+cat_colors[s.cat]+"44'>"+cat_labels[s.cat]+"</span></td><td style='font-size:.7rem'>"+s.geo+"</td></tr>";
+  }).join("");
+  document.getElementById("st-tbody").innerHTML=html;
+}
+
 document.querySelectorAll(".fbtn").forEach(function(btn){
   btn.addEventListener("click",function(){
     activeFilter=btn.dataset.cat;
     document.querySelectorAll(".fbtn").forEach(function(b){b.classList.remove("active");});
-    btn.classList.add("active");render();closePanel();
+    btn.classList.add("active");
+    render(tlActive?parseInt(document.getElementById("tl-slider").value):null);
+    closePanel();
   });
 });
-function cycleTile(){var modes=["dark","color","satellite"];var labels={"dark":"Map: Dark","color":"Map: Color","satellite":"Map: Satellite"};var idx=modes.indexOf(currentTile);var next=modes[(idx+1)%3];map.removeLayer(tileLayers[currentTile]);tileLayers[next].addTo(map);currentTile=next;document.getElementById("tile-btn").textContent=labels[next];var tp=document.querySelector(".leaflet-tile-pane");if(tp){tp.className="leaflet-tile-pane"+(next==="color"?" color-mode":next==="satellite"?" satellite-mode":"");}}
+
 render();
 </script>
 </body>
